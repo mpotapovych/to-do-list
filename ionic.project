@@ -1,0 +1,10 @@
+{
+  "name": "api_maryna",
+  "app_id": "",
+  "proxies": [
+  	{
+      "path": "/api/",
+      "proxyUrl": "http://myfirstapisarmkadan.azurewebsites.net/api/values/"
+    }
+  ]
+}

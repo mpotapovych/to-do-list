@@ -1,94 +1,77 @@
 angular.module('todo', ['ionic'])
 
-.factory('Projects', function() {
+.constant('ApiEndpoint', {
+    url: 'http://localhost:8100/api/'
+})
+
+.factory('API', function($http, ApiEndpoint) {
+
+    var urlBase = ApiEndpoint.url;
+
     return {
         all: function() {
-            var projectString = window.localStorage['projects'];
-            if(projectString) {
-                return angular.fromJson(projectString);
-            }
-            return [];
+           return $http.get(urlBase);
         },
-        save: function(projects) {
-            localStorage['projects'] = angular.toJson(projects);
+        get: function(id) {
+            return $http.get(urlBase + id);
         },
-        newProject: function(projectTitle) {
-            return {
-                title: projectTitle,
-                tasks: []
-            };
+        save: function(data) {
+            return $http.post(urlBase, data);
         },
-        getLastActiveIndex: function() {
-            return parseInt(localStorage['lastActiveProject']) || 0;
+        update: function(data) {
+            return $http.put(urlBase + data.Id, data);
         },
-        setLastActiveIndex: function(index) {
-            localStorage['lastActiveProject'] = index;
+        delete: function(id) {
+            return $http.delete(urlBase + id);
         }
     }
 })
 
-.controller('todoCtrl', function($scope, $timeout, $ionicModal, Projects, $ionicSideMenuDelegate) {
+.controller('apiCtrl', function($scope, API, $ionicModal) {
 
-    // Load or initialize projects
-    $scope.projects = Projects.all();
+    $scope.data = {};
+    $scope.currentItem = null;
 
-    // A utility function for creating a new project
-    // with the given projectTitle
-    var createProject = function(projectTitle) {
-        var newProject = Projects.newProject(projectTitle);
-        $scope.projects.push(newProject);
-        Projects.save($scope.projects);
-        $scope.selectProject(newProject, $scope.projects.length-1);
+    $scope.loadData = function() {
+        API.all()
+            .success(function(data) {
+                $scope.data = data;
+            });
     }
 
-    // Grab the last active, or the first project
-    $scope.activeProject = $scope.projects[Projects.getLastActiveIndex()];
+    $scope.deleteItem = function(id) {
 
-    // Called to create a new project
-    $scope.newProject = function() {
-        var projectTitle = prompt('Project name');
-        if(projectTitle) {
-            createProject(projectTitle);
-        }
-    };
-
-    // Called to select the given project
-    $scope.selectProject = function(project, index) {
-        $scope.activeProject = project;
-        Projects.setLastActiveIndex(index);
-        $ionicSideMenuDelegate.toggleLeft(false);
-    };
-
-    // Create our modal
-    $ionicModal.fromTemplateUrl('new-task.html', function(modal) {
-        $scope.taskModal = modal;
-    }, {
-        scope: $scope
-    });
-
-    $scope.createTask = function(task) {
-        if(!$scope.activeProject || !task) {
+        var flag = confirm("Are you sure?");
+        if(flag === false) {
             return;
         }
-        $scope.activeProject.tasks.push({
-            title: task.title
-        });
-        $scope.taskModal.hide();
 
-        // Inefficient, but save all the projects
-        Projects.save($scope.projects);
-        task.title = "";
-    };
-
-    $scope.newTask = function() {
-        $scope.taskModal.show();
-    };
-
-    $scope.closeNewTask = function() {
-        $scope.taskModal.hide();
+        API.delete(id)
+            .success(function() {
+                $scope.loadData();
+            });
     }
 
-    $scope.toggleProjects = function() {
-        $ionicSideMenuDelegate.toggleLeft();
-    };
+    $scope.updateItem = function(item) {
+        API.update(item)
+            .success(function() {
+                $scope.loadData();
+            });
+    }
+
+    $scope.newItem = function() {
+        var item = {};
+        item.Value = prompt('Value');
+        if(item.Value) {
+            $scope.createItem(item);
+        }
+    }
+
+    $scope.createItem = function(item) {
+        item.State = true;
+        API.save(item).
+            success(function() {                
+                $scope.loadData();
+            });
+    }
 })

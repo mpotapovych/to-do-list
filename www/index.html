@@ -32,91 +32,56 @@
     <!-- your app's js -->
     <script src="js/app.js"></script>
   </head>
-  <body ng-app="todo" ng-controller="todoCtrl">
+  <body ng-app="todo" ng-controller="apiCtrl">
 
-  <ion-side-menus>
-      <!-- Center content -->
-      <ion-side-menu-content>
-          <ion-header-bar class="bar-balanced">
-              <button class="button button-icon" ng-click="toggleProjects()">
-                  <i class="icon ion-navicon"></i>
-              </button>
-              <h1 class="title">{{activeProject.title}}</h1>
-              <!-- New Task button-->
-              <button class="button button-icon" ng-click="newTask()">
-                  <i class="icon ion-plus"></i>
-              </button>
-          </ion-header-bar>
-          <ion-content scroll="false">
-              <ion-list>
-                  <ion-item ng-repeat="task in activeProject.tasks">
-                      {{task.title}}
-                      <ion-option-button class="button-assertive" ng-click="deleteTask(task)">Delete</ion-option-button>
-                  </ion-item>
-              </ion-list>
-          </ion-content>
-      </ion-side-menu-content>
+    <ion-view title="api" ng-init="loadData()">
+  <ion-header-bar class="bar-balanced">
+    <h1 class="title">API</h1>    
+    <button class="button button-icon" ng-click="newItem()">
+        <i class="icon ion-plus"></i>
+    </button>
+  </ion-header-bar>
 
-      <!-- Left menu -->
-      <ion-side-menu side="left">
-          <ion-header-bar class="bar-calm">
-              <h1 class="title">Projects</h1>
-              <button class="button button-icon ion-plus" ng-click="newProject()"></button>
-          </ion-header-bar>
-          <ion-content scroll="false">
-              <ion-list  show-delete="data.shouldShowDelete" show-reorder="data.shouldShowReorder" can-swipe="listCanSwipe" >
-                  <ion-item ng-repeat="project in projects" ng-click="selectProject(project, $index)" ng-class="{active: activeProject == project}">
-                      {{project.title}}
-                      <ion-delete-button class="ion-minus-circled" ng-click="deleteProject(project)"></ion-delete-button>
-                  </ion-item>
-              </ion-list>
-          </ion-content>
-      </ion-side-menu>
+    <ion-content>
+      <ion-list>
+        <ion-item ng-repeat="item in data" class="item item-icon-right">
+          <ion-checkbox style="border:0;" ng-model="item.State" ng-checked="item.State" ng-change="updateItem(item)">            
+            <h3>{{item.Value}}</h3>            
+          </ion-checkbox>
+          <i class="icon ion-trash-b assertive" ng-click="deleteItem(item.Id)"></i>  
+        </ion-item>
+      </ion-list>
+    </ion-content>
 
-      <script id="new-task.html" type="text/ng-template">
+    <script id="new-item.html" type="text/ng-template">
 
           <div class="modal">
 
               <!-- Modal header bar -->
               <ion-header-bar class="bar-secondary">
-                  <h1 class="title">New Task</h1>
-                  <button class="button button-clear button-positive" ng-click="closeNewTask()">Cancel</button>
+                  <h1 class="title">New Item</h1>
+                  <button class="button button-clear button-positive" ng-click="closeNewItem()">Cancel</button>
               </ion-header-bar>
 
               <!-- Modal content area -->
               <ion-content>
-
-                  <form ng-submit="createTask(task)">
+                  <form ng-submit="createItem(item)">
                       <div class="list">
                           <label class="item item-input">
-                              <input type="text" placeholder="What do you need to do?" ng-model="task.title">
+                              <input type="text" placeholder="" ng-model="item.Value">
                           </label>
                       </div>
                       <div class="padding">
-                          <button type="submit" class="button button-block button-calm">Create Task</button>
+                          <button type="submit" class="button button-block button-calm">Save item</button>
                       </div>
                   </form>
-
               </ion-content>
 
           </div>
 
       </script>
 
-  </ion-side-menus>
-
-  <script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
-  <script>
-      // Initialize Firebase
-      var config = {
-          apiKey: "AIzaSyDoWAsbO71wLExk87kOHqbLg1U_cI8knH4",
-          authDomain: "todolist-48cd5.firebaseapp.com",
-          databaseURL: "https://todolist-48cd5.firebaseio.com",
-          storageBucket: "todolist-48cd5.appspot.com",
-          messagingSenderId: "307349766200"
-      };
-      firebase.initializeApp(config);
-  </script>
+</ion-view>
 
   </body>
 </html>
