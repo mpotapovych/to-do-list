@@ -35,8 +35,8 @@
   <body ng-app="todo" ng-controller="apiCtrl">
 
     <ion-view title="api" ng-init="loadData()">
-  <ion-header-bar class="bar-balanced">
-    <h1 class="title">API</h1>    
+  <ion-header-bar class="bar-positive">
+    <h1 class="title"></h1>    
     <button class="button button-icon" ng-click="newItem()">
         <i class="icon ion-plus"></i>
     </button>
@@ -48,7 +48,7 @@
           <ion-checkbox style="border:0;" ng-model="item.State" ng-checked="item.State" ng-change="updateItem(item)">            
             <h3>{{item.Value}}</h3>            
           </ion-checkbox>
-          <i class="icon ion-trash-b assertive" ng-click="deleteItem(item.Id)"></i>  
+          <i class="icon ion-trash-b positive" ng-click="deleteItem(item.Id)"></i>  
         </ion-item>
       </ion-list>
     </ion-content>
