@@ -4,7 +4,7 @@
   "proxies": [
   	{
       "path": "/api/",
-      "proxyUrl": "http://myfirstapisarmkadan.azurewebsites.net/api/values/"
+      "proxyUrl": "http://myfirstapisarmkadan.azurewebsites.net/api/"
     }
   ]
 }

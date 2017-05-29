@@ -1,12 +1,16 @@
 angular.module('todo', ['ionic'])
 
+.run(function($http) {
+  $http.defaults.headers.common.Token = '1BD0C289EAF920A5E6B369844A746830';
+})
+
 .constant('ApiEndpoint', {
     url: 'http://localhost:8100/api/'
 })
 
 .factory('API', function($http, ApiEndpoint) {
 
-    var urlBase = ApiEndpoint.url;
+    var urlBase = ApiEndpoint.url + "Task/";
 
     return {
         all: function() {
@@ -27,7 +31,16 @@ angular.module('todo', ['ionic'])
     }
 })
 
-.controller('apiCtrl', function($scope, API, $ionicModal) {
+.controller('apiCtrl', function($scope, API, $ionicModal, $window, $ionicPopup ) {
+
+    $scope.online = $window.navigator.onLine;
+
+    if(!$scope.online) {
+        $ionicPopup.alert({
+            title: "There is no Internet!"
+        });
+    }
+
 
     $scope.data = {};
     $scope.currentItem = null;
